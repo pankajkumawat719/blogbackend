@@ -2,6 +2,7 @@ package com.krefer.blog.services.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.krefer.blog.entity.Comment;
 import com.krefer.blog.entity.Post;
@@ -11,6 +12,7 @@ import com.krefer.blog.repositories.CommentRepo;
 import com.krefer.blog.repositories.PostRepo;
 import com.krefer.blog.services.CommentService;
 
+@Service
 public class CommentServiceImpl implements CommentService {
 
 	@Autowired

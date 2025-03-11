@@ -5,13 +5,17 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.krefer.blog.config.AppConstants;
+import com.krefer.blog.entity.Role;
+import com.krefer.blog.entity.User;
+import com.krefer.blog.exception.ResourceNotFoundException;
 import com.krefer.blog.payloads.UserDto;
+import com.krefer.blog.repositories.RoleRepo;
 import com.krefer.blog.repositories.UserRepo;
 import com.krefer.blog.services.UserService;
-import com.krefer.blog.entity.User;
-import com.krefer.blog.exception.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -21,6 +25,12 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private ModelMapper modelMapper;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private RoleRepo roleRepo;
 
 	@Override
 	public UserDto createUser(UserDto userDto) {
@@ -77,12 +87,26 @@ public class UserServiceImpl implements UserService {
 
 	// to convert user to dto
 	public UserDto userToDto(User user) {
-		UserDto userDto =this.modelMapper.map(user, UserDto.class);
+		UserDto userDto = this.modelMapper.map(user, UserDto.class);
 //		userDto.setId(user.getId());
 //		userDto.setName(user.getName());
 //		userDto.setEmail(user.getEmail());
 //		userDto.setPassword(user.getPassword());
 //		userDto.setAbout(user.getAbout());
 		return userDto;
+	}
+
+	@Override
+	public UserDto registerNewUser(UserDto userDto) {
+
+		User user = this.modelMapper.map(userDto, User.class);
+
+		// encoded password
+		user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+		// role
+		Role role = this.roleRepo.findById(AppConstants.NORMAL_USER).get();
+		user.getRoles().add(role);
+		User newUser = this.userRepo.save(user);
+		return this.modelMapper.map(newUser, UserDto.class);
 	}
 }

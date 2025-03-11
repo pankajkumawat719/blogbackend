@@ -1,6 +1,11 @@
 package com.krefer.blog.payloads;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.hibernate.validator.constraints.NotBlank;
+
+import com.krefer.blog.entity.Role;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -31,5 +36,7 @@ public class UserDto {
 	String password;
 	@NotEmpty
 	private String about;
+	
+	private Set<RoleDto> roles = new HashSet<>();
 	
 }
